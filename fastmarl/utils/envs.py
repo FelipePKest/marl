@@ -1,7 +1,7 @@
 from functools import partial
 import random
 
-import gym
+import gymnasium as gym
 import numpy as np
 from omegaconf import DictConfig
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
@@ -48,7 +48,7 @@ def _make_parallel_envs(
             env = mwrappers.ObserveID(env)
         for wrapper in wrappers:
             env = getattr(mwrappers, wrapper)(env)
-        env.seed(seed)
+        env.unwrapped.seed(seed)
         return env
 
     if seed is None:
@@ -76,7 +76,7 @@ def _make_env(name, time_limit, clear_info, observe_id, wrappers, seed, **kwargs
         env = mwrappers.ObserveID(env)
     for wrapper in wrappers:
         env = getattr(mwrappers, wrapper)(env)
-    env.seed(seed)
+    env.unwrapped.seed(seed)
     return env
 
 

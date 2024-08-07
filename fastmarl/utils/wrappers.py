@@ -5,8 +5,8 @@ from collections import deque
 from time import perf_counter
 import warnings
 
-import gym
-from gym import ObservationWrapper, spaces
+import gymnasium as gym
+from gymnasium import ObservationWrapper, spaces
 import numpy as np
 
 
@@ -95,7 +95,7 @@ class SquashDones(gym.Wrapper):
 class ObserveID(gym.ObservationWrapper):
     def __init__(self, env):
         super().__init__(env)
-        agent_count = env.n_agents
+        agent_count = env.unwrapped.n_agents
         self.observation_space = gym.spaces.Tuple(
             tuple(
                 [gym.spaces.Box(
@@ -157,9 +157,10 @@ class StandardizeReward(gym.RewardWrapper):
 
 class TimeLimit(gym.wrappers.TimeLimit):
     def __init__(self, env, max_episode_steps=None):
-        super().__init__(env)
+        super().__init__(env, 25)
         if max_episode_steps is None and self.env.spec is not None:
-            max_episode_steps = env.spec.max_episode_steps
+            # max_episode_steps = env.spec.max_episode_steps
+            max_episode_steps = 25
         # if self.env.spec is not None:
         #     self.env.spec.max_episode_steps = max_episode_steps
         self._max_episode_steps = max_episode_steps
@@ -198,20 +199,20 @@ class SMACCompatible(gym.Wrapper):
         return [np.zeros(5) for x in self.observation_space]
 
 
-class Monitor(gym.wrappers.Monitor):
-    def _after_step(self, observation, reward, done, info):
-        if not self.enabled:
-            return done
+# class Monitor(gym.Wrapper):
+#     def _after_step(self, observation, reward, done, info):
+#         if not self.enabled:
+#             return done
 
-        if done and self.env_semantics_autoreset:
-            # For envs with BlockingReset wrapping VNCEnv, this observation will be the first one of the new episode
-            self.reset_video_recorder()
-            self.episode_id += 1
-            self._flush()
+#         if done and self.env_semantics_autoreset:
+#             # For envs with BlockingReset wrapping VNCEnv, this observation will be the first one of the new episode
+#             self.reset_video_recorder()
+#             self.episode_id += 1
+#             self._flush()
 
-        # Record stats
-        self.stats_recorder.after_step(observation, sum(reward), done, info)
-        # Record video
-        self.video_recorder.capture_frame()
+#         # Record stats
+#         self.stats_recorder.after_step(observation, sum(reward), done, info)
+#         # Record video
+#         self.video_recorder.capture_frame()
 
-        return done
+#         return done
