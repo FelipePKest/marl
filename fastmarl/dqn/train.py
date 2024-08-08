@@ -55,12 +55,12 @@ def _evaluate(env, model, eval_episodes, greedy_epsilon):
 
 def main(env, logger, **cfg):
     cfg = DictConfig(cfg)
-
+ 
     # replay buffer:
     env_dict = create_env_dict(env)
     
     force_coop = wrappers.is_wrapped_by(env, wrappers.CooperativeReward)
-    if not force_coop: env_dict["rew"]["shape"] = env.n_agents
+    if not force_coop: env_dict["rew"]["shape"] = env.unwrapped.n_agents
     rb = ReplayBuffer(cfg.buffer_size, env_dict)
     before_add = create_before_add_func(env)
 

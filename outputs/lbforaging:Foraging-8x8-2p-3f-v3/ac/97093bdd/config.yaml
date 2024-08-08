@@ -1,0 +1,35 @@
+total_steps: 100000
+log_interval: 10000
+save_interval: 10000
+eval_interval: 10000
+eval_episodes: 5
+video_interval: false
+video_frames: 500
+_target_: ac.train.main
+name: ac
+model:
+  _target_: ac.model.ActorCritic
+  actor:
+    layers:
+    - 64
+    - 64
+    parameter_sharing: false
+    use_orthogonal_init: true
+  critic:
+    centralised: false
+    layers:
+    - 64
+    - 64
+    parameter_sharing: false
+    use_orthogonal_init: true
+  device: cpu
+optimizer: Adam
+lr: 0.0003
+grad_clip: false
+n_steps: 10
+gamma: 0.99
+entropy_coef: 0.01
+value_loss_coef: 0.5
+use_proper_termination: false
+standardize_returns: false
+target_update_interval_or_tau: 200
