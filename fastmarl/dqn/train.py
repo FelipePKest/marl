@@ -1,4 +1,5 @@
 from copy import deepcopy
+from logging import Logger
 import math
 
 from cpprb import ReplayBuffer, create_before_add_func, create_env_dict
@@ -53,18 +54,28 @@ def _evaluate(env, model, eval_episodes, greedy_epsilon):
     return infos
 
 
-def main(env, logger, **cfg):
+def main(env, logger: Logger, **cfg):
     cfg = DictConfig(cfg)
- 
+    
+    logger.info("In dqn train.py")
+    logger.info(cfg)
     # replay buffer:
     env_dict = create_env_dict(env)
     
+    logger.info("Created env")
+    logger.info("obs space is %s and action space is %s",str(env.observation_space), str(env.action_space))
+
     force_coop = wrappers.is_wrapped_by(env, wrappers.CooperativeReward)
     if not force_coop: env_dict["rew"]["shape"] = env.unwrapped.n_agents
     rb = ReplayBuffer(cfg.buffer_size, env_dict)
     before_add = create_before_add_func(env)
 
-    model = hydra.utils.instantiate(cfg.model, env.observation_space, env.action_space, cfg)
+    logger.info("Will instantiate")
+
+
+    model = hydra.utils.instantiate(cfg.model, env.observation_space, env.action_space, cfg, logger)
+
+    logger.info("Instanced")
 
     # Logging
     logger.watch(model)

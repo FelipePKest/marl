@@ -21,12 +21,14 @@ class QNetwork(nn.Module):
         parameter_sharing,
         use_orthogonal_init,
         device,
+        # logger,
     ):
         super().__init__()
         hidden_size = list(layers)
         optimizer = getattr(optim, cfg.optimizer)
         lr = cfg.lr
 
+        # logger.info("init obs space is %s and action space is %s",str(obs_space), str(action_space))
         self.action_space = action_space
 
         self.n_agents = len(obs_space)

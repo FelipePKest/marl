@@ -17,10 +17,10 @@ OmegaConf.register_new_resolver(
 @hydra.main(version_base=None,config_path="configs", config_name="default")
 def main(cfg: DictConfig):
 
-    print(cfg)
+    # print(cfg)
     logger = hydra.utils.instantiate(cfg.logger, cfg=cfg.algorithm, _recursive_=False)
     logger.info("Infoo")    
-
+    logger.info(cfg)
     env = hydra.utils.call(cfg.env, cfg.seed)
 
     # # logger.log()
@@ -36,7 +36,7 @@ def main(cfg: DictConfig):
         logger.warning("No seed has been set.")
 
     # print("\n\n\n SEED SET \n\n\n")
-    # hydra.utils.call(cfg.algorithm, env, logger, _recursive_=False)
+    hydra.utils.call(cfg.algorithm, env, logger, _recursive_=False)
 
     # print("\n\n\n HYDRA CALL \n\n\n")
 
